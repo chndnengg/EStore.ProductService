@@ -30,11 +30,15 @@ namespace Ecommerce.ProductService.Services
 
             return products;
         }
-        public async Task<string> CreateProductAsync(string product)
+        public async Task<ProductDto> CreateProductAsync(ProductDto productDto)
         {
-            throw new NotImplementedException();
+            string url = "https://fakestoreapi.com/products/";
+            EstoreProductDto estoreProductDto = _mapper.Map<EstoreProductDto>(productDto);
+            var resonse = await CreateModel<EstoreProductDto>(url, estoreProductDto);
+            ProductDto createProductDto = _mapper.Map<ProductDto>(resonse);
+            return productDto;
         }
-      
+
         public async Task<string> DeleteProductAsync(int id)
         {
             throw new NotImplementedException();

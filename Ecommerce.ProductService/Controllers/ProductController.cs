@@ -16,9 +16,14 @@ namespace Ecommerce.ProductService.Controllers
             _productService = productService;
         }
         [HttpGet("{id}")]
-        public async Task<ProductDto> GetProduct([FromRoute] int id)
+        public async Task<IActionResult> GetProduct([FromRoute] int id)
         {
-            return await _productService.GetProductAsync(id);
+            ProductDto productDto = await _productService.GetProductAsync(id);
+            if(productDto == null)
+            {
+                return NotFound($"Product with Id: {id} not found");
+            }
+            return Ok(productDto);
         }
         [HttpGet]
         public async Task<List<ProductDto>> GetProducts()
@@ -26,9 +31,9 @@ namespace Ecommerce.ProductService.Controllers
             return await _productService.GetProductAllAsync(null);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromBody] string product)
+        public async Task<ProductDto> CreateProduct([FromBody] ProductDto productDto)
         {
-            return Ok(product);
+            return await _productService.CreateProductAsync(productDto);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateProduct([FromBody] string product)

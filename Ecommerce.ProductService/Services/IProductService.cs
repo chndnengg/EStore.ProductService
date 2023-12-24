@@ -7,7 +7,7 @@ namespace Ecommerce.ProductService.Services
     {
         Task<ProductDto> GetProductAsync(int id);
         Task<List<ProductDto>> GetProductAllAsync(Predicate<string> predicate);
-        Task<string> CreateProductAsync(string product);
+        Task<ProductDto> CreateProductAsync(ProductDto productDto);
         Task<string> UpdateProductAsync(string product);
         Task<string> DeleteProductAsync(int id);
     }
