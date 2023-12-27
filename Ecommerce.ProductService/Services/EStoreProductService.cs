@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Ecommerce.ProductService.Adapters;
 using Ecommerce.ProductService.Dtos;
 using Ecommerce.ProductService.Model;
 using Ecommerce.ProductService.Repository;
@@ -10,33 +11,26 @@ namespace Ecommerce.ProductService.Services
     {
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
-        public EStoreProductService(IProductRepository productRepository, IMapper mapper)
+        private readonly FakeStoreServiceAdapter _adapter;
+        private readonly IProductService _productService;
+        public EStoreProductService(IProductRepository productRepository, IMapper mapper, ProductDBContext productDBContext)
         {
             _productRepository = productRepository;
             _mapper = mapper;
+            this._adapter = new FakeStoreServiceAdapter(mapper);
+            this._productService = new ProductSQLAdapter(mapper, productDBContext);
         }
         public async Task<ProductDto> GetProductAsync(int id)
         {
-            string url = $"https://fakestoreapi.com/products/{id}";
-            EstoreProductDto sourceProductDto = await GetModel<EstoreProductDto>(url);
-            ProductDto productDto = _mapper.Map<ProductDto>(sourceProductDto);
-            return productDto;
+            return await _productService.GetProductAsync(id);
         }
         public async Task<List<ProductDto>> GetProductAllAsync(Predicate<string> predicate)
         {
-            string url = "https://fakestoreapi.com/products/";
-            List<EstoreProductDto> sourceProducts = await GetModel<List<EstoreProductDto>>(url);
-            List<ProductDto> products = _mapper.Map<List<ProductDto>>(sourceProducts);
-
-            return products;
+            return await _productService.GetProductAllAsync(predicate);
         }
         public async Task<ProductDto> CreateProductAsync(ProductDto productDto)
         {
-            string url = "https://fakestoreapi.com/products/";
-            EstoreProductDto estoreProductDto = _mapper.Map<EstoreProductDto>(productDto);
-            var resonse = await CreateModel<EstoreProductDto>(url, estoreProductDto);
-            ProductDto createProductDto = _mapper.Map<ProductDto>(resonse);
-            return productDto;
+            return await _adapter.CreateProductAsync(productDto);
         }
 
         public async Task<string> DeleteProductAsync(int id)

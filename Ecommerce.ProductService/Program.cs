@@ -3,6 +3,7 @@ using AutoMapper;
 using Ecommerce.ProductService.Mappings;
 using Ecommerce.ProductService.Repository;
 using Ecommerce.ProductService.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.ProductService
 {
@@ -18,6 +19,10 @@ namespace Ecommerce.ProductService
             builder.Services.AddScoped<IProductService, EStoreProductService>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddAutoMapper(typeof(MappingProfiles));
+            builder.Services.AddDbContext<ProductDBContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("ProductServiceDB"));
+            });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
